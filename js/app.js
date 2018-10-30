@@ -120,7 +120,6 @@ const Deck = {
         ViewChanger.openCard(index);
         
         if (Deck.opened.length === 2) { window.setTimeout(Deck.checkMatch, 200); } 
-                       
     },
     checkMatch : () => {
         console.log(`In Deck.checkMatch() : `);
