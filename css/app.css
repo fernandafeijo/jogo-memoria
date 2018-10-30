@@ -1,11 +1,13 @@
 html {
     box-sizing: border-box;
 }
+
 *,
 *::before,
 *::after {
     box-sizing: inherit;
 }
+
 html,
 body {
     width: 100%;
@@ -13,58 +15,68 @@ body {
     margin: 0;
     padding: 0;
 }
+
 body {
-    background: #ffffff url('../img/geometry2.png'); 
+    background: #fff url('../img/geometry2.png'); 
     font-family: 'Coda', cursive;
 }
+
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
+
 h1 {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
 }
 
-/*pop-up*/
+/* Estilo do modal: mensagem inicial*/
 .modal {
-    width: 600px;
-    height: 600px;
-    font-size: 12px;
-    position: fixed; 
-    z-index: 1; 
-    background-color: #fff; 
+    width: 660px;
+    height: 620px;
+    padding: 5%;
+    font-size: 14px;
+    color:#000;
+    position: fixed;
+    z-index: 1;
+    background-color: #fff;
+    opacity: 0.6;
     text-align: center;
 }
+
 .modal.show {
-    display: block; 
+    display: block;
 }
+
 .modal.hide {
     display: none;
 }
 
-/*cartões*/
+/*ESTILO DOS CARTÕES*/
+/*Plano de fundo externo*/
 .deck {
     width: 660px;
     min-height: 680px;
-    background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
+    background: linear-gradient(160deg, #FFFF6D 0%, #FF690D 100%); 
     padding: 32px;
     border-radius: 10px;
-    box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
+    box-shadow: 12px 15px 20px 0 #878787;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin: 0 0 3em;
 }
+/*Plano de fundo dos cartões*/
 .deck .card {
     height: 125px;
     width: 125px;
-    background: #2e3d49;
+    background: #fff;
     font-size: 0;
-    color: #ffffff;
+    color: #fff;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
@@ -72,21 +84,24 @@ h1 {
     align-items: center;
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
 }
+/*Plano de fundo dos cartões quando virados*/
 .deck .card.open {
     transform: rotateY(0);
-    background: #02b3e4;
+    background: #000;
     cursor: default;
 }
+
 .deck .card.show {
     font-size: 33px;
 }
+/*Plano de fundo dos cartões quando match*/
 .deck .card.match {
     cursor: default;
-    background: #02ccba;
+    background: #FF690D;
     font-size: 33px;
 }
 
-/*pontuação*/
+/*ESTILO DO PAINEL DE PONTOS*/
 .score-panel {
     text-align: left;
     width: 345px;
@@ -98,6 +113,7 @@ h1 {
     padding: 0;
     display: inline-block;
     margin: 0 5px 0 0;
+    color: #FF690D;
 }
 
 .score-panel .stars li {
@@ -109,4 +125,3 @@ h1 {
     float: right;
     cursor: pointer;
 }
-

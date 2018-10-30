@@ -1,6 +1,6 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 // for better error handling, and performance 
-"use strict"; 
+"use strict";
 
 /* Architecture Overview
 - EventListener creates listener and calls EventHandler
@@ -22,18 +22,18 @@ Advantage:
  *
  */
 const ScorePanel = {
-    move : 0,
-    time : 0,
-    star : 3,
-    incrementTime : () => {
+    move: 0,
+    time: 0,
+    star: 3,
+    incrementTime: () => {
         ScorePanel.time += 1;
         ViewChanger.setTime(ScorePanel.time);
     },
-    incrementMove : () => {
+    incrementMove: () => {
         ScorePanel.move += 1;
         ViewChanger.setMoves(ScorePanel.move);
 
-        if (ScorePanel.move === 30) {         
+        if (ScorePanel.move === 30) {
             ScorePanel.star = 2;
             ViewChanger.setStars(2);
         } else if (ScorePanel.move === 40) {
@@ -43,7 +43,7 @@ const ScorePanel = {
             // do nothing. stars don't change
         }
     },
-    reset : () => {
+    reset: () => {
         ScorePanel.move = 0;
         ScorePanel.star = 3;
         ScorePanel.time = 0;
@@ -55,57 +55,47 @@ const ScorePanel = {
 Object.seal(ScorePanel);
 
 
-/* Timer global variable is declared and will later have interval function of
- * ScorePanel.incrementTime() attached when user clicks start and the interval function
- * will be stopped when all cards are matched or player presses restart.
+/* Variável Timer: será interrompido quando todas as cartas forem correspondidas ou o jogador pressionar novamente.
  */
 let Timer;
 
-
-/* represents card's symbol (enum). In order to represent enum, it should be used with Object.freeze() to
- * prevent any modification. Symbol enum's value is CSS class that represent each symbol in view. 
- * Therefore, if our view changes, we have to change Symbol enum accordingly
- */
+/*SIMBOLOS: em ordem, deve ser usado com Object.freeze () para  impedir qualquer modificação */
 const Symbol = {
-    ANCHOR : 'fa fa-anchor',
-    BICYCLE : 'fa fa-bicycle',
-    BOLT : 'fa fa-bolt',
-    BOMB : 'fa fa-bomb',
-    CUBE : 'fa fa-cube',
-    DIAMOND : 'fa fa-diamond',
-    LEAF : 'fa fa-leaf',
-    PLANE : 'fa fa-paper-plane-o',    
+    ANCHOR: 'fa fa-anchor',
+    BICYCLE: 'fa fa-bicycle',
+    BOLT: 'fa fa-bolt',
+    BOMB: 'fa fa-bomb',
+    CUBE: 'fa fa-cube',
+    DIAMOND: 'fa fa-diamond',
+    LEAF: 'fa fa-leaf',
+    PLANE: 'fa fa-paper-plane-o',
 }
-// we don't want our Symbol enum to change during runtime.
-Object.freeze(Symbol);
+
+Object.freeze(Symbol); // para que o símbolo enum não mude durante o tempo de execução
 
 
-/* represents card's state (enum). In order to represent enum, it should be used with Object.freeze() to
- * prevent any modification. State enum's value is CSS class that represent each state in view. 
- * Therefore, if our view changes, we have to change Symbol enum accordingly
- */
+/* Representa o enum, deve ser usado com Object.freeze () para  impedir qualquer modificação. */
 const State = {
-    CLOSED : 'card',
-    OPENED : 'card open show',
-    MATCHED : 'card open match',
+    CLOSED: 'card',
+    OPENED: 'card open show',
+    MATCHED: 'card open match',
 }
-// we don't want our State enum to change during runtime
-Object.freeze(State);
+
+Object.freeze(State); //// para que o enum não seja alterado durante o tempo de execução
 
 
 const Deck = {
-    cards : [Symbol.ANCHOR, Symbol.ANCHOR, Symbol.BICYCLE, Symbol.BICYCLE, Symbol.BOLT, Symbol.BOLT, Symbol.BOMB, Symbol.BOMB, Symbol.CUBE, Symbol.CUBE, Symbol.DIAMOND, Symbol.DIAMOND, Symbol.LEAF, Symbol.LEAF, Symbol.PLANE, Symbol.PLANE],
-    opened : [],
-    matched : [],
-    shuffle : (array) => {
-        // Algorithm adapted from https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm 
+    cards: [Symbol.ANCHOR, Symbol.ANCHOR, Symbol.BICYCLE, Symbol.BICYCLE, Symbol.BOLT, Symbol.BOLT, Symbol.BOMB, Symbol.BOMB, Symbol.CUBE, Symbol.CUBE, Symbol.DIAMOND, Symbol.DIAMOND, Symbol.LEAF, Symbol.LEAF, Symbol.PLANE, Symbol.PLANE],
+    opened: [],
+    matched: [],
+    shuffle: (array) => { // Adaptado de: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm 
         for (let i = array.length - 1; i > 0; --i) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
         ViewChanger.setCardsSymbols(array);
     },
-    reset : () => {
+    reset: () => {
         console.log(`In Deck.reset() : `);
         Deck.opened.length = 0;
         Deck.matched.length = 0;
@@ -114,32 +104,40 @@ const Deck = {
         }
         Deck.shuffle(Deck.cards);
     },
-    tryOpeningCard : ({index, symbol}) => {
+    tryOpeningCard: ({
+        index,
+        symbol
+    }) => {
         console.log(`In Deck.tryOpeningCard(${index}, ${symbol})`);
-        Deck.opened.push({index,symbol})
+        Deck.opened.push({
+            index,
+            symbol
+        })
         ViewChanger.openCard(index);
-        
-        if (Deck.opened.length === 2) { window.setTimeout(Deck.checkMatch, 200); } 
+
+        if (Deck.opened.length === 2) {
+            window.setTimeout(Deck.checkMatch, 200);
+        }
+
     },
-    checkMatch : () => {
+    checkMatch: () => {
         console.log(`In Deck.checkMatch() : `);
         const c0 = Deck.opened[0];
         const c1 = Deck.opened[1];
 
-        if (c0.symbol !== c1.symbol ) {
+        if (c0.symbol !== c1.symbol) {
             ViewChanger.closeCard(c0.index);
             ViewChanger.closeCard(c1.index);
             Deck.opened.length = 0;
         } else {
             ViewChanger.matchCard(c0.index);
-             ViewChanger.matchCard(c1.index);            
+            ViewChanger.matchCard(c1.index);
             Deck.matched.push(c0, c1);
             Deck.opened.length = 0;
         }
 
         if (Deck.matched.length === Deck.cards.length) {
-            // win condition
-            console.log("you win");
+            console.log("você ganhou");
             clearInterval(Timer);
             ViewChanger.hideStartButton(false);
         }
@@ -150,16 +148,13 @@ Object.freeze(Deck);
 Object.seal(Deck.cards)
 
 
-/* ViewChanger is a layer between model and view so all changes in DOM has be in ViewChanger class
- * ViewChanger is dependent on our Symbol and State enum's value.
- * both ViewChanger and EventListener accesses view, we need to make sure they don't interfere.
- */
+/* ViewChanger: todas as alterações no DOM ficam nesta classe, depende do valor do símbolo e do estado do enum */
 class ViewChanger {
     static setStars(numStars) {
         console.log(`class ViewChanger setStars(${numStars}) : changes number of stars in View`);
         const d = document.getElementsByClassName("stars")[0];
         const starHTML = '<li><i class="fa fa-star"></i></li>';
-        d.innerHTML = starHTML.repeat(numStars); 
+        d.innerHTML = starHTML.repeat(numStars);
     }
 
     static setMoves(numMoves) {
@@ -202,24 +197,26 @@ class ViewChanger {
     static hideStartButton(bool) {
         const d = document.getElementsByClassName("modal")[0];
         if (bool === true) {
-            d.innerHTML = `Ready to Play? <br><br>
-            3 stars &lt; 30 moves <br>
-            2 stars &lt; 40 moves <br>
-            1 star  &gt;= 40 moves<br><br> 
-            Click to Play`;
+            d.innerHTML = `Vamos jogar de novo? <br><br>
+            3 estrelas &lt; 30 movimentos <br>
+            2 estrelas &lt; 40 movimentos <br>
+            1 estrela  &gt;= 40 movimentos<br><br> 
+            Clique para JOGAR`;
             d.className = "modal hide";
         } else {
-            d.innerHTML = `Congratulation! <br><br> Total Time Taken: ${ScorePanel.time} <br> Star Rating: ${ScorePanel.star} <br> Total Moves: ${ScorePanel.move}  <br><br> Click to Restart`;
+            d.innerHTML = `PARABÉNS, você conseguiu! <br>
+            <br> O seu tempo foi: ${ScorePanel.time} segundos
+            <br> Você conseguiu: ${ScorePanel.star} estrelas 
+            <br> Você fez: ${ScorePanel.move}  movimentos 
+            <br> o/
+            <br><br> CLIQUE para jogar novamente`;
             d.className = "modal show";
         }
     }
 
 }
 
-/* has methods for each possible user's actions. Each method will attach event listener to user's view
- * if our view changes, we have to make sure to change this! 
- * both ViewChanger and EventListener accesses view, we need to make sure they don't interfere.
- */
+/*Método para cada ação do usuário possível. Cada método irá anexar ouvinte de evento à visão do usuário*/
 class EventListener {
     static setClickStart() {
         console.log("class EventListener setClickStart() : setup click eventListener for start button...");
@@ -235,15 +232,15 @@ class EventListener {
         d.addEventListener("click", EventHandler.clickRestart);
     }
 
+    // Ouvinte de cartão no elemento pai
+    // Baseado em: https://davidwalsh.name/event-delegate
     static setClickCards() {
         console.log("class EventListener setClickCardsListener(): setup click eventListener for each card...")
         console.log("[Listening...] card clicks");
-        
-        // why attach event listener on every card? attach one listener to parent and use event delegation
-        // inspired from https://davidwalsh.name/event-delegate
+
         const d = document.getElementsByClassName("deck")[0];
-        
-        // We will call event handler when the card is closed
+
+        //manipulador de eventos quando o cartão estiver fechado
         d.addEventListener("click", (e) => {
             const state = e.target.className;
             console.log(state);
@@ -254,8 +251,6 @@ class EventListener {
     }
 }
 
-/* has a event handler methods for each possible user's action. 
- */
 class EventHandler {
     static clickCard(e) {
         console.log(`[EVENT] user clicks card and triggers EventHandler.clickCard()`);
@@ -266,8 +261,11 @@ class EventHandler {
         const symbol = e.target.firstChild.className;
 
         ScorePanel.incrementMove();
-        Deck.tryOpeningCard({index, symbol});
-        
+        Deck.tryOpeningCard({
+            index,
+            symbol
+        });
+
     }
     static clickRestart() {
         console.log('[EVENT] user clicks restart button and triggers EventHandler.clickRestart()');
