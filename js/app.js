@@ -1,5 +1,5 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-// for better error handling, and performance 
+// diminuir erros e melhorar performance 
 "use strict";
 
 /* Architecture Overview
@@ -7,19 +7,6 @@
 - EventHandler handles event by calling internal models (ScorePanel, Deck).
 - Internal models will modify based on events and call ViewChanger to modify view
 - ViewChanger changes DOM HTML
-
-Advantage:
-- View is decoupled from model 
-    - when I change HTML&CSS (likely to change), that change is only propagated to EventListener and ViewChanger
-- Easier to test in isolation. 
-    - does ViewChanger change HTML? 
-    - does EventListener create listener and call appropriate EventHandler?
-    - Do internal models work the way we expect without worrying about events, and views
-*/
-
-
-/*
- *
  */
 const ScorePanel = {
     move: 0,
@@ -39,9 +26,7 @@ const ScorePanel = {
         } else if (ScorePanel.move === 40) {
             ScorePanel.star = 1;
             ViewChanger.setStars(1);
-        } else {
-            // do nothing. stars don't change
-        }
+        } else {}
     },
     reset: () => {
         ScorePanel.move = 0;
@@ -53,7 +38,6 @@ const ScorePanel = {
     }
 }
 Object.seal(ScorePanel);
-
 
 /* Variável Timer: será interrompido quando todas as cartas forem correspondidas ou o jogador pressionar novamente.
  */
