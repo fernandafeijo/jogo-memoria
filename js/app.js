@@ -26,7 +26,7 @@ const ScorePanel = {
         } else if (ScorePanel.move === 40) {
             ScorePanel.star = 1;
             ViewChanger.setStars(1);
-        } else {}
+        } 
     },
     reset: () => {
         ScorePanel.move = 0;
